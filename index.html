@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SignalLens — an interactive walkthrough</title>
+<meta name="description" content="Making AI commerce visibility observable. LLM as witness, code as judge.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="progress"></div>
+<nav id="chapters" aria-label="Chapters">
+  <a data-t="c1"><i>01</i><span>The Problem</span></a>
+  <a data-t="c2"><i>02</i><span>The Idea</span></a>
+  <a data-t="c3"><i>03</i><span>The System</span></a>
+  <a data-t="c4"><i>04</i><span>The Trust Model</span></a>
+  <a data-t="c5"><i>05</i><span>The Kasparro Connection</span></a>
+  <a data-t="c6"><i>06</i><span>The Future</span></a>
+</nav>
+
+<header class="hero" id="top">
+  <p class="mono">AN INTERACTIVE WALKTHROUGH</p>
+  <h1>SIGNALLENS</h1>
+  <h2>Making AI commerce visibility observable.</h2>
+  <p class="sub">What I built, why I built it, and where I see it going.<br><em>Built as an exploration of AI-assisted product discovery.</em></p>
+  <svg class="flow" viewBox="0 0 800 120" aria-label="Buyer question to AI recommendation to signal to insight">
+    <path class="wire" d="M100 60H300M300 60H500M500 60H700"/>
+    <g class="mono" text-anchor="middle">
+      <circle cx="100" cy="60" r="7"/><text x="100" y="100">BUYER QUESTION</text>
+      <circle cx="300" cy="60" r="7"/><text x="300" y="100">AI RECOMMENDATION</text>
+      <circle cx="500" cy="60" r="7"/><text x="500" y="100">SIGNAL</text>
+      <circle class="acc" cx="700" cy="60" r="10"/><text x="700" y="100">INSIGHT</text>
+    </g>
+  </svg>
+  <a class="btn" data-t="c1">START THE WALKTHROUGH ↓</a>
+</header>
+
+<main>
+<section id="c1">
+  <p class="mono tag">01 · THE PROBLEM</p>
+  <h2 class="big rv">Product discovery is changing.</h2>
+  <p class="rv">Search. Marketplaces. Ads. Brand websites. SEO. That was the map. <b>Now imagine asking AI instead.</b></p>
+  <div class="chat rv" id="chat">
+    <div class="u">What's the best sunscreen for oily skin under ₹500?</div>
+    <div class="a">Here are a few options…</div>
+    <div class="cards"><span>Neutrogena</span><span>Dot &amp; Key</span><span>Minimalist</span></div>
+  </div>
+  <h2 class="big rv accent">Where is the brand?</h2>
+  <p class="rv">Traditional analytics tell a brand what happens <em>after</em> a customer discovers it. But what about the moment before? What happens when an AI system decides which products enter the recommendation?</p>
+  <div class="two rv">
+    <div><p class="mono">WHAT WE ALREADY MEASURE</p><ul><li>Traffic</li><li>CTR</li><li>Conversions</li><li>Search rankings</li><li>Campaign performance</li></ul></div>
+    <div class="hl"><p class="mono">THE QUESTION I WANTED TO EXPLORE</p><ul><li>AI recommendation visibility</li></ul><p>If consumers increasingly ask AI what to buy, can we measure whether a product is actually entering those recommendations?</p></div>
+  </div>
+</section>
+
+<section id="c2">
+  <p class="mono tag">02 · THE IDEA</p>
+  <h2 class="big rv">That question became <span class="accent">SignalLens</span>.</h2>
+  <div class="steps rv" id="steps">
+    <b>BUYER QUESTION</b><b>AI RECOMMENDATION</b><b>PRODUCT / BRAND VISIBILITY</b><b>COMPETITOR SIGNALS</b><b>EVIDENCE</b><b>INSIGHT</b>
+  </div>
+  <h2 class="huge rv">LLM AS WITNESS.<br><span class="accent">CODE AS JUDGE.</span></h2>
+  <p class="rv">I didn't want a system where an LLM gives me a score and I simply trust it. The model can observe, say what appeared, and return structured evidence. The analytical conclusions are calculated deterministically.</p>
+  <div class="two rv">
+    <div><p class="mono">AI · OBSERVATION</p><pre>Minimalist appeared
+Position: 2
+Competitors:
+  Neutrogena
+  Dot &amp; Key</pre></div>
+    <div class="hl"><p class="mono">CODE · ANALYSIS</p><ul><li>Inclusion rate</li><li>Average position</li><li>Competitor frequency</li><li>Requirement matching</li><li>Attribute coverage</li></ul></div>
+  </div>
+
+  <h3 class="rv">Walk through one question</h3>
+  <p class="rv q">“Which sunscreen under ₹500 is good for oily skin and leaves no white cast?”</p>
+  <div class="chips rv" id="chips">
+    <button data-k="price">PRICE</button><button data-k="skin">SKIN TYPE</button><button data-k="cast">WHITE CAST</button>
+  </div>
+  <p class="expl" id="expl">Click a requirement to see how it becomes a checkable signal.</p>
+  <div class="two rv">
+    <div><p class="mono">PRODUCT DATA · Minimalist SPF 50</p><ul><li>₹399</li><li>SPF 50 · PA++++</li><li>Lightweight</li><li>Fragrance-free</li><li>Oily skin</li></ul></div>
+    <div class="hl"><p class="mono">REQUIREMENT CHECK</p><ul class="chk"><li class="ok">PRICE — ₹399 ≤ ₹500 ✓ MATCH</li><li class="ok">SKIN — Oily skin ✓ MATCH</li><li class="warn">WHITE CAST — not explicitly represented ⚠ POTENTIAL GAP</li></ul></div>
+  </div>
+  <p class="note rv">This is not proof of why the AI made its recommendation. It is a signal worth investigating.</p>
+
+  <h3 class="rv">One response is not enough</h3>
+  <div class="sim rv" id="sim">
+    <div class="mono">RUN 5 PROMPTS — computed locally in your browser</div>
+    <table id="tbl"></table>
+    <button class="btn" id="run">RUN THE CALCULATION</button>
+    <div class="nums">
+      <div><big id="n1">0</big><small>prompts</small></div>
+      <div><big id="n2">0</big><small>brand mentions</small></div>
+      <div><big id="n3">0%</big><small>inclusion rate</small></div>
+      <div><big id="n4">0</big><small>avg position</small></div>
+    </div>
+  </div>
+</section>
+
+<section id="c3">
+  <p class="mono tag">03 · THE SYSTEM</p>
+  <h2 class="big rv">How SignalLens works.</h2>
+  <p class="rv">An explanatory diagram, not a live backend. Click any stage.</p>
+  <div class="archwrap rv"><svg id="arch" viewBox="0 0 800 400" role="img" aria-label="Architecture: probabilistic layer above, deterministic layer below">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2dd4d0"/></marker></defs>
+<rect class="zone" x="0" y="0" width="800" height="195"/><rect class="zone zone2" x="0" y="195" width="800" height="205"/>
+<text class="lbl" x="20" y="28">INPUTS + PROBABILISTIC LAYER</text><text class="lbl" x="20" y="222">DETERMINISTIC LAYER · FAILS CLOSED</text>
+<line class="bnd" x1="0" y1="195" x2="800" y2="195"/><text class="lbl" x="780" y="188" text-anchor="end" style="fill:#2dd4d0">TRUST BOUNDARY</text>
+<path class="w" d="M170 95H223M373 95H427M577 95H630M705 130V260M630 295H577M427 295H373M223 295H170"/>
+<g class="nd" data-i="0"><rect x="20" y="60" width="150" height="70" rx="3"/><text x="95" y="92">USER</text><text class="s" x="95" y="110">scenarios</text></g><g class="nd" data-i="1"><rect x="223" y="60" width="150" height="70" rx="3"/><text x="298" y="92">FRONTEND</text><text class="s" x="298" y="110">ui · state</text></g><g class="nd" data-i="2"><rect x="427" y="60" width="150" height="70" rx="3"/><text x="502" y="92">PROMPT BUILDER</text><text class="s" x="502" y="110">intent → prompts</text></g><g class="nd" data-i="3"><rect x="630" y="60" width="150" height="70" rx="3"/><text x="705" y="92">AI OBSERVATION</text><text class="s" x="705" y="110">llm call · witness</text></g><g class="nd det" data-i="4"><rect x="630" y="260" width="150" height="70" rx="3"/><text x="705" y="292">STRUCTURED DATA</text><text class="s" x="705" y="310">schema · validate</text></g><g class="nd det" data-i="5"><rect x="427" y="260" width="150" height="70" rx="3"/><text x="502" y="292">ANALYSIS ENGINE</text><text class="s" x="502" y="310">pure functions · judge</text></g><g class="nd det" data-i="6"><rect x="223" y="260" width="150" height="70" rx="3"/><text x="298" y="292">FINDINGS</text><text class="s" x="298" y="310">rules · wording</text></g><g class="nd det" data-i="7"><rect x="20" y="260" width="150" height="70" rx="3"/><text x="95" y="292">EVIDENCE</text><text class="s" x="95" y="310">trace · prompts</text></g>
+<text class="lbl" x="400" y="385" text-anchor="middle">CONCEPTUAL MAP · CLICK ANY BLOCK · MODULE NAMES ARE ILLUSTRATIVE</text></svg></div>
+<div class="panel" id="panel"></div>
+<p class="mono rv" style="margin-top:36px">Or step through as a list</p>
+<div class="sys rv" id="sys"></div>
+  <p class="mono rv" style="margin-top:40px">HOW THIS WALKTHROUGH IS BUILT</p>
+  <div class="code-map rv"><b>index.html</b> — story markup, one section per chapter<br><b>style.css</b> — palette tokens (:root), layout, arch diagram<br><b>script.js</b> — observers, local calculations, system panel data</div>
+</section>
+
+<section id="c4">
+  <p class="mono tag">04 · THE TRUST MODEL</p>
+  <h2 class="big rv">The trust boundary.</h2>
+  <div class="bound rv">
+    <div><p class="mono">PROBABILISTIC</p><h3>AI</h3><p>“What did you observe?”</p></div>
+    <div class="line"></div>
+    <div class="hl"><p class="mono">DETERMINISTIC</p><h3>CODE</h3><p>“What can we calculate?”</p></div>
+  </div>
+  <div class="steps rv"><b>AI</b><b>STRUCTURED OBSERVATION</b><b>VALIDATION</b><b>DETERMINISTIC ANALYSIS</b><b>EVIDENCE</b><b>HUMAN DECISION</b></div>
+  <h2 class="huge rv">The system does not ask <span class="accent">AI to grade AI.</span></h2>
+</section>
+
+<section id="c5">
+  <p class="mono tag">05 · THE KASPARRO CONNECTION</p>
+  <h2 class="big rv">Where I see SignalLens connecting with Kasparro</h2>
+  <p class="rv">I built SignalLens as an independent project. While thinking about where the problem could become useful in the real world, I started thinking about Kasparro. This is my hypothesis, not an existing Kasparro product.</p>
+  <h2 class="huge rv">What happens before the customer reaches the brand?</h2>
+  <p class="rv">If a commerce intelligence company helps brands understand their digital performance, there is an additional question: what happens when the customer asks AI what to buy?</p>
+  <div class="hyp rv">
+    <p class="mono warnc">HYPOTHETICAL KASPARRO USE CASE</p>
+    <p>A skincare brand works with a commerce/growth team that already knows traffic, conversions, search and campaign performance. They want to know: <b>are AI assistants recommending our products?</b> SignalLens could potentially provide brand inclusion, observed position, competitor appearances, buyer-requirement patterns, potential product-information gaps, and the evidence behind each.</p>
+  </div>
+  <div class="steps rv"><b>CLIENT</b><b>PRODUCT / BRAND</b><b>BUYER QUESTIONS</b><b>SIGNALLENS</b><b>AI OBSERVATIONS</b><b>DETERMINISTIC ANALYSIS</b><b>VISIBILITY SIGNALS</b><b>EVIDENCE</b><b>COMMERCE TEAM</b></div>
+  <p class="big rv">Not another dashboard.<br><span class="accent">Another layer of visibility.</span></p>
+
+  <h3 class="rv">The kind of insight I want to create</h3>
+  <div class="find rv">
+    <p class="mono warnc">POTENTIAL VISIBILITY GAP</p>
+    <p>Requirement: “No white cast” · Observed: brand absent in several prompts containing it · Profile: requirement not explicitly represented.</p>
+    <p><b>What SignalLens can say:</b> “This pattern is worth investigating.”</p>
+    <ul class="no"><li>“AI hates this product.”</li><li>“Adding this attribute guarantees recommendations.”</li><li>“This is definitely why the brand disappeared.”</li></ul>
+    <ul class="yes"><li>✓ An observable pattern supported by the tested prompts.</li><li>✓ Here is the evidence.</li><li>✓ Here is what the team can investigate next.</li></ul>
+  </div>
+  <p class="rv">The same habits Kasparro describes in its engineering doctrine — schemas as contracts, pipelines that fail closed, refusing to emit a number that can't be defended — are the habits I tried to build into this project.</p>
+</section>
+
+<section id="c6">
+  <p class="mono tag">06 · THE FUTURE</p>
+  <h2 class="big rv">My engineering thinking</h2>
+  <div class="cardsx rv" id="think"></div>
+  <h3 class="rv">If I continued building this <small class="mono warnc">FUTURE CONCEPTS · NOT IMPLEMENTED</small></h3>
+  <div class="road rv" id="road"></div>
+</section>
+
+<section id="cine">
+  <div id="lines">
+    <p>SEO helped us understand where products appear in search.</p>
+    <p>AI is becoming part of product discovery.</p>
+    <p>So I started asking a different question.</p>
+    <p class="huge">WHEN A BUYER ASKS AI WHAT TO BUY, ARE WE PART OF THE ANSWER?</p>
+    <p class="accent">SIGNALLENS IS MY ATTEMPT TO MAKE THAT QUESTION MEASURABLE.</p>
+  </div>
+</section>
+
+<section id="why">
+  <h3 class="rv">Why I want to explore this with Kasparro</h3>
+  <p class="rv">I didn't build SignalLens because I wanted another portfolio project. I built it because I wanted to explore a problem where AI, commerce, product data and decision-making intersect. Kasparro made me think about how this idea could move from an individual experiment toward a real commerce intelligence use case.</p>
+  <p class="rv">I want to explore the problem. I want to understand the real constraints. I want to test whether this creates measurable value. And I want to build from there.</p>
+</section>
+</main>
+
+<footer>
+  <h2>SIGNALLENS</h2>
+  <p>From AI recommendations<br>to observable commerce intelligence.</p>
+  <p class="mono">The project is SignalLens. The real story is how I thought about the problem.</p>
+  <div class="btns">
+    <a class="btn" href="#top" id="again">EXPLORE AGAIN</a>
+    <a class="btn" href="https://singlelens.vercel.app/" target="_blank" rel="noopener">VIEW PROJECT</a>
+    <a class="btn" href="https://suchismitasportfolio.netlify.app/" target="_blank" rel="noopener">PORTFOLIO / CONTACT</a>
+    <a class="btn" href="https://kasparro.com/" target="_blank" rel="noopener">KASPARRO ↗</a>
+  </div>
+</footer>
+<script src="script.js"></script>
+</body>
+</html>
